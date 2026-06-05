@@ -1,7 +1,9 @@
+import os
+from dotenv import load_dotenv
 from passlib.context import CryptContext
 from datetime import datetime, timedelta
 from jose import JWTError, jwt
-
+load_dotenv()
 SECRET_KEY = "supersecretkey"  # change later
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
