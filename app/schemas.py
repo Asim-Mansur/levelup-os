@@ -11,6 +11,13 @@ class UserOut(BaseModel):
     username: str
     email: str
 
+    level: int
+    current_xp: int
+    total_xp: int
+
+    
+        
+
     class Config:
         orm_mode = True
 class LoginRequest(BaseModel):

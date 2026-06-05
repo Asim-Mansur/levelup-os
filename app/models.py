@@ -18,7 +18,7 @@ class User(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
     skills = relationship("Skill", back_populates="user")
-
+    activities = relationship("ActivityLog")
 
 class Skill(Base):
     __tablename__ = "skills"
@@ -32,7 +32,7 @@ class Skill(Base):
     total_xp = Column(Integer, default=0)
 
     user = relationship("User", back_populates="skills")
-
+    activities = relationship("ActivityLog")
 
 class ActivityLog(Base):
     __tablename__ = "activity_logs"
@@ -45,3 +45,6 @@ class ActivityLog(Base):
     xp_earned = Column(Integer)
 
     timestamp = Column(DateTime, default=datetime.utcnow)
+
+    user = relationship("User")
+    skill = relationship("Skill")

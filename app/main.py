@@ -10,15 +10,29 @@ from fastapi import FastAPI
 from .database import engine
 from . import models
 from app.database import Base, engine
-
+from fastapi.middleware.cors import CORSMiddleware
 Base.metadata.create_all(bind=engine)
 from app.services.xp_engine import calculate_xp, apply_xp
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
-
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 @app.get("/")
+@app.get("/test-skills")
+def test_skills():
+    return [
+        {"name": "Football", "level": 2},
+        {"name": "Academics", "level": 1},
+        {"name": "Finance", "level": 1},
+        {"name": "Gym", "level": 1}
+    ]
 def root():
     return {"message": "LevelUp OS backend running"}
 @app.post("/register", response_model=schemas.UserOut)
@@ -120,25 +134,51 @@ def log_activity(
 
     apply_xp(current_user, xp_gained)
 
-    # Log activity
+        # Log activity
     log = models.ActivityLog(
         user_id=current_user.id,
         skill_id=skill.id,
         description=f"{activity.skill_name} activity",
         xp_earned=xp_gained
-
-
     )
 
     db.add(log)
     db.commit()
 
     return {
-    "skill": skill.name,
-    "skill_level": skill.level,
-    "skill_current_xp": skill.current_xp,
-    "xp_gained": xp_gained,
-    "user_level": current_user.level,
-    "user_current_xp": current_user.current_xp,
-    "user_total_xp": current_user.total_xp
-}
+        "skill": skill.name,
+        "skill_level": skill.level,
+        "skill_current_xp": skill.current_xp,
+        "xp_gained": xp_gained,
+        "user_level": current_user.level,
+        "user_current_xp": current_user.current_xp,
+        "user_total_xp": current_user.total_xp
+    }
+
+
+@app.get("/activity-history")
+def get_activity_history(
+    current_user: models.User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    activities = (
+        db.query(models.ActivityLog)
+        .filter(
+            models.ActivityLog.user_id == current_user.id
+        )
+        .order_by(
+            models.ActivityLog.timestamp.desc()
+        )
+        .limit(20)
+        .all()
+    )
+
+    return [
+        {
+            "skill": activity.skill.name,
+            "xp": activity.xp_earned,
+            "description": activity.description,
+            "timestamp": activity.timestamp,
+        }
+        for activity in activities
+    ]
