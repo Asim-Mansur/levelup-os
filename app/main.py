@@ -7,14 +7,14 @@ from app.database import get_db
 from app.security import hash_password
 from app import schemas, models
 from fastapi import FastAPI
-from .database import engine
-from . import models
+
+
 from app.database import Base, engine
 from fastapi.middleware.cors import CORSMiddleware
 Base.metadata.create_all(bind=engine)
 from app.services.xp_engine import calculate_xp, apply_xp
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
-models.Base.metadata.create_all(bind=engine)
+
 
 app = FastAPI()
 app.add_middleware(
@@ -25,6 +25,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 @app.get("/")
+def root():
+    return {"message": "LevelUp OS backend running"}
+
 @app.get("/test-skills")
 def test_skills():
     return [
@@ -33,8 +36,6 @@ def test_skills():
         {"name": "Finance", "level": 1},
         {"name": "Gym", "level": 1}
     ]
-def root():
-    return {"message": "LevelUp OS backend running"}
 @app.post("/register", response_model=schemas.UserOut)
 def register(user: schemas.UserCreate, db: Session = Depends(get_db)):
 
