@@ -8,7 +8,7 @@ function ActivityForm({ onActivityLogged }) {
     const token = localStorage.getItem("token");
 
     const response = await fetch(
-      "http://127.0.0.1:8000/log-activity",
+  `${API_URL}/log-activity`,
       {
         method: "POST",
         headers: {
