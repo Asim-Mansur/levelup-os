@@ -22,11 +22,15 @@ function Login() {
 
   console.log("LOGIN RESPONSE:", data);
 
-  localStorage.setItem(
-    "token",
-    data.access_token
-  );
-  window.location.reload();
+alert(JSON.stringify(data));
+
+localStorage.setItem(
+  "token",
+  data.access_token
+);
+
+// temporarily disable this
+// window.location.reload();
 };
   return (
     <div>
