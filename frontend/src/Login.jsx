@@ -20,7 +20,7 @@ function Login() {
 
   const data = await response.json();
 
-  console.log(data);
+  console.log("LOGIN RESPONSE:", data);
 
   localStorage.setItem(
     "token",
