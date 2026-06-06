@@ -29,6 +29,8 @@ localStorage.setItem(
   data.access_token
 );
 
+window.location.href = "/dashboard";
+
 // temporarily disable this
 // window.location.reload();
 };
