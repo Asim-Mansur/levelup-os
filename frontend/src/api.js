@@ -1,4 +1,4 @@
-const API_URL = "https://levelup-os-production.up.railway.app";
+export const API_URL = "https://levelup-os-production.up.railway.app";
 function getHeaders() {
   const token = localStorage.getItem("token");
 
